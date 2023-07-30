@@ -4,15 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using DG.Tweening;
+using Graup_of_Runner.Scripts.Characters;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 
 public class UIManager : MonoBehaviour
 {
     private static UIManager uiManeger;
-    public AnimatorController _animatorController;
+    [FormerlySerializedAs("_animatorController")] public PlayerAnimatorController playerAnimatorController;
     private List<RunkingSystem> sortArry = new List<RunkingSystem>();
     private InGameRanking inGameRanking;
     [Header("Ranking")]
@@ -38,7 +40,7 @@ public class UIManager : MonoBehaviour
         inGameRanking = FindObjectOfType<InGameRanking>();
 
         restartButtonOn.onClick.AddListener(RestartGame);
-        tapToPlayButtonOn.onClick.AddListener(_animatorController.StartRunAim);
+        tapToPlayButtonOn.onClick.AddListener(playerAnimatorController.StartRunAim);
         tapToPlayButtonOn.onClick.AddListener(TapToPlayScreen);
         ShopButtonOn.onClick.AddListener(ShopingPanel);
         mainScreenButtonOn.onClick.AddListener(MainScreenPanel);
@@ -76,8 +78,8 @@ public class UIManager : MonoBehaviour
         inGameRanking.Neo = sortArry[1].name;
         inGameRanking.Peace = sortArry[0].name;
     }
-    
-    public void RestartGame()
+
+    private void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }

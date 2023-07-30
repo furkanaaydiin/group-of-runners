@@ -7,7 +7,7 @@ using System.Linq;
 
 public  class GameManager : MonoBehaviour
 {
-     public static GameManager istance;
+     public static GameManager Instance;
      [Header("Play end over")]
      public bool gameOver;
      public bool startGame;
@@ -21,7 +21,7 @@ public  class GameManager : MonoBehaviour
 
     private void Awake()
     {
-       istance = this;
+       Instance = this;
         
     }
    

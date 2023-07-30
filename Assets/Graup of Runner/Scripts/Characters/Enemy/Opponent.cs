@@ -3,21 +3,21 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using DG.Tweening;
+using Graup_of_Runner.Scripts.Camera;
+using Graup_of_Runner.Scripts.Characters;
+using Graup_of_Runner.Scripts.Characters.Enemy;
 using Unity.VisualScripting;
+using CameraType = Graup_of_Runner.Scripts.Camera.CameraType;
 using Random = UnityEngine.Random;
 
-public class Opponent : MonoBehaviour
+public class Opponent : AgentBase
 {
     public NavMeshAgent opponentAgentNavMash;
-    public Animator opponentAnim;
-    public GameManager gamemanager;
-    public FinisCamRotation finisCamRotation;
-    public CameraManager cameraManager;
-    
     public GameObject opponentTarget;
     public GameObject speedBoosterIcon;
     public GameObject AI;
     public GameObject restartPanel;
+    public Animator opponentAmimatorController;
     
 
     private Vector3 _opponentStartPos;
@@ -36,21 +36,18 @@ public class Opponent : MonoBehaviour
 	    opponentRigidbody = GetComponent<Rigidbody>();
 	    opponentAgentNavMash.speed = Random.Range(7,10);
 	    _opponentStartPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-	   
-	    
-
     }
     
     
     public void Finish()
     {
 	    opponentAgentNavMash.speed = 0;
-	    opponentAnim.SetBool("isWin",true);
+	    opponentAmimatorController.SetBool("isWin",true);
 	    opponentRigidbody.isKinematic = true;
 	    gamemanager.FinishTac.SetActive(false);
 	    AI.transform.DOScale(Vector3.one * 5, 1f);
-	    finisCamRotation.FinisRotation();
-	    cameraManager.ToLoseCam();
+	    FinisCamRotation.Instance.FinisRotation();
+	    CameraController.Instance.ChangeCamera(CameraType.PlayerLoseCam);
 	    gamemanager.FinishParticle1.Play();
 	    gamemanager.FinishParticle2.Play();
 	    restartPanel.SetActive(true);
@@ -58,7 +55,8 @@ public class Opponent : MonoBehaviour
     public void Lose()
    {
 	   opponentAgentNavMash.speed = 0;
-	   opponentAnim.SetBool("isLose",true);
+	   opponentAmimatorController.SetBool("isLose",true);
+	   _isRunningOpponent = true;
    }
    private void FixedUpdate()
     {
@@ -69,7 +67,7 @@ public class Opponent : MonoBehaviour
 	   
         if (opponentAgentNavMash.velocity.magnitude > 0.1f && !_isRunningOpponent)
         {
-	        opponentAnim.CrossFade("FastRun",0.10f);
+	        opponentAmimatorController.CrossFade("FastRun",0.10f);
 	        _isRunningOpponent = true;
         }
         else if (_isRunningOpponent && opponentAgentNavMash.velocity.magnitude <= 0.1)
@@ -89,7 +87,8 @@ public class Opponent : MonoBehaviour
 			transform.DOJump(new Vector3(transform.position.x,transform.position.y,transform.position.z +6f),3f, 1, 1f).SetEase(Ease.Flash);
 		}
 	}
-	private void OnTriggerEnter(Collider other)
+
+	public  void OnTriggerEnter(Collider other)
 	{
 		if (other.CompareTag("speedboost"))
 		{
@@ -121,11 +120,11 @@ public class Opponent : MonoBehaviour
     private  IEnumerator RunningendJumpCorontine()
     {
 	    _isOpponentJump = true;
-	    opponentAnim.SetBool("isAttackjump",true);
-	    opponentAnim.SetBool("isRun",false);
+	    opponentAmimatorController.SetBool("isAttackjump",true);
+	    opponentAmimatorController.SetBool("isRun",false);
 	    yield return new WaitForSeconds(1f);
-	    opponentAnim.SetBool("isRun",true);
-	    opponentAnim.SetBool("isAttackjump",false);
+	    opponentAmimatorController.SetBool("isRun",true);
+	    opponentAmimatorController.SetBool("isAttackjump",false);
 	    _isOpponentJump = false;
 	    
     }
@@ -133,13 +132,13 @@ public class Opponent : MonoBehaviour
     private IEnumerator RestartOpponentCorontine()
     {
 	    opponentAgentNavMash.speed = 0;
-	    opponentAnim.SetBool("isDead",true);
+	    opponentAmimatorController.SetBool("isDead",true);
 	    deadParticle.transform.position = transform.position;
 	    deadParticle.Play();
 	    yield return new WaitForSeconds(3f);
 	    transform.position = _opponentStartPos;
-	    opponentAnim.SetBool("isDead",false);
-	    opponentAnim.CrossFade("FastRun",0.10f);
+	    opponentAmimatorController.SetBool("isDead",false);
+	    opponentAmimatorController.CrossFade("FastRun",0.10f);
 	    opponentAgentNavMash.speed = Random.Range(7, 10);
 	  
 

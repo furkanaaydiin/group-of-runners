@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Graup_of_Runner.Scripts.Characters;
+using Graup_of_Runner.Scripts.Characters.Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class FinishWinCharacter : MonoBehaviour
 {
-    public PlayerController _playerController;
-    public AnimatorController animatorController;
+    public Player _playerController;
+    public PlayerAnimatorController playerAnimatorController;
     public UIManager uiManager;
     public Opponent[] AIopponent;
 
@@ -23,7 +26,7 @@ public class FinishWinCharacter : MonoBehaviour
            finish = true;
            _playerController.runningSpeed = 0;
            _playerController.xSpeed = 0;
-           animatorController.WinAnim();
+           playerAnimatorController.WinAnim();
            foreach (var opponent in AIopponent)
            {
             opponent.Lose();
@@ -37,7 +40,7 @@ public class FinishWinCharacter : MonoBehaviour
           var opponentScript = other.GetComponent<Opponent>();
           _playerController.runningSpeed = 0;
           _playerController.xSpeed = 0;
-          animatorController.LoseAnim();
+          playerAnimatorController.LoseAnim();
           opponentScript.Finish();
           foreach (var opponent in AIopponent)
           {

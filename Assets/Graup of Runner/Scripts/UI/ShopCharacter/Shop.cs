@@ -23,10 +23,20 @@ public class Shop : MonoBehaviour
     GameObject ItemTempLate;
     GameObject Icon;
     Button buyBTN;
+    public GameObject[] shopCharacter;
+
+    public void Characters() // 23.07.2023
+    {
+        for (var i = 0; i < shopCharacter.Length; i++)
+        {
+            shopCharacter[i].transform.GetChild(1).GetChild(0).GetComponent<SkinnedMeshRenderer>().enabled = false;
+        }
+    }
 
 
     private void Start()
    {
+       Characters();
        int characterLengt = ShopCharacterList.Count;
        ItemTempLate = ShopScrolWiew.GetChild(0).gameObject;
        for (int i = 0; i < characterLengt; i++)
@@ -47,12 +57,11 @@ public class Shop : MonoBehaviour
 
    void OnShopItemsBtnClick(int itemIndex)
    {
-       if (GameManager.istance.HasEnoughCup(ShopCharacterList[itemIndex].Price))
+       if (GameManager.Instance.HasEnoughCup(ShopCharacterList[itemIndex].Price))
        {
-           GameManager.istance.UseCup(ShopCharacterList[itemIndex].Price);
+           GameManager.Instance.UseCup(ShopCharacterList[itemIndex].Price);
            // alındı alınmadı 
            ShopCharacterList[itemIndex].isPurchased = true;
-       
            //disble the button
            buyBTN =ShopScrolWiew.GetChild(itemIndex).GetChild(2).GetComponent<Button>();
            buyBTN.interactable = false;
@@ -72,6 +81,6 @@ public class Shop : MonoBehaviour
 
    void SetCupsUI()
    {
-       CupeText.text = GameManager.istance.cup.ToString();
+       CupeText.text = GameManager.Instance.cup.ToString();
    }
 }
